@@ -1,48 +1,13 @@
 
 ## fall back data retrieval in case ExperimentHub is down
 .sesameDataGet_fallback <- function(title) {
-    u1 <- sprintf('%s/sesameData/%s.rda', alt_base, title)
-    if (valid_url(u1)) {
-        sesameDataGet_assignEnv(title, get(load(url(u1))))
-        TRUE
-    } else {
-        warning(sprintf("Resource %s cannot be retrieved.", title))
-        FALSE
-    }
-    TRUE
+    u1 <- sprintf('%s/%s.rda', alt_base, title)
+    sesameDataGet_assignEnv(title, get(load(u1)))
 }
 
 .sesameDataGet <- function(title) {
-    eh_id <- df_master$EHID[match(title, df_master$Title)]
-    if (eh_id %in% c("TBD", "NA")) { eh_id <- NA; }
-    stopifnot(is.na(eh_id) || length(eh_id) == 1)
-    
-    if (is.na(eh_id)) { # missing from lookup table
-        if (sesameData_open_alt) {
-            .sesameDataGet_fallback(title)
-            eh_id <- title
-        } else {
-            stop(sprintf("Data %s not found.\n", title))
-        }
-    } else {
-        ## try ExperimentHub
-        if (!exists(eh_id, envir=cacheEnv, inherits=FALSE)) {
-            if (!file.exists(getExperimentHubOption("CACHE"))) {
-                stopAndCache(title) }
-            tryCatch({
-                eh <- query(ExperimentHub(localHub=TRUE), 'sesameData')
-            }, error = function(cond) { stopAndCache(title); })
-            if (!(eh_id %in% names(eh))) {
-                stopAndCache(title); }
-            sesameDataGet_assignEnv(eh_id, eh[[eh_id]])
-        }
-    }
-
-    ## try backup
-    if (!exists(eh_id, envir=cacheEnv, inherits=FALSE)) {
-        stop(sprintf("%s doesn't exist.", title))
-    }
-    return(get(eh_id, envir=cacheEnv, inherits=FALSE))
+    u1 <- sprintf('%s/%s.rda', alt_base, title)
+    sesameDataGet_assignEnv(title, get(load(u1)))
 }
 
 #' Get SeSAMe data
@@ -59,16 +24,8 @@
 #' EPIC.1.SigDF <- sesameDataGet('EPIC.1.SigDF')
 #' @export
 sesameDataGet <- function(title, verbose = FALSE) {
-
-    title <- str_replace(title, "MMB", "MM285") # fix potential code discrepancy
-    
-    if (verbose) {
-        .sesameDataGet(title)
-    } else {
-        suppressMessages(
-            log <- capture.output(obj <- .sesameDataGet(title)))
-        obj
-    }
+    u1 <- sprintf('%s/%s.rda', alt_base, title)
+    sesameDataGet_assignEnv(title, get(load(u1)))
 }
 
 #' List all SeSAMe data
