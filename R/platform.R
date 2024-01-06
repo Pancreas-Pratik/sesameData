@@ -51,10 +51,10 @@ sesameData_check_platform <- function(platform = NULL, probes = NULL) {
 sesameData_check_genome <- function(genome, platform) {
     if ("GRanges" %in% class(genome)) { return(genome); }
     platform <- sesameData_check_platform(platform)
-    supported_genomes <- c("hg19", "hg38", "mm10")
+    supported_genomes <- c("hg19", "hg38", "mm10", "mm39")
     default_genome <- c(
-        HM27 = "hg38", HM450 = "hg38", EPIC = "hg38", EPICv2 = "hg38",
-        Mammal40 = "hg38", MM285 = "mm10")
+        HM27 = "hg38", HM450 = "hg38", EPIC = "hg38",
+        Mammal40 = "hg38", MM285 = "mm39")
     if (is.null(genome)) { genome <- default_genome[platform] }
     stopifnot(!is.null(genome))
     stopifnot(genome %in% supported_genomes)
