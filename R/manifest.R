@@ -46,11 +46,5 @@ sesameData_getGenomeInfo <- function(genome) {
     }
     stopifnot(is.character(genome))
     key <- paste0('genomeInfo.', genome)
-#    if (!sesameDataHas(key)) {
-        stop(sprintf("%s genome info is not found in Bioconductor.
-Please go to http://zwdzwd.github.io/InfiniumAnnotation
-for additional genome info files.
-", genome))
-    }
     sesameDataGet(key)
 }
